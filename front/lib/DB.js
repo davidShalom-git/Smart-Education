@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const mongoDB = 'mongodb://127.0.0.1:27017/learning'
+const mongoDB = process.env.MONGODB_URI
 
 
 if(!mongoDB){
