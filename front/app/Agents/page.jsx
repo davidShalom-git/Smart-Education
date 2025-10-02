@@ -16,6 +16,7 @@ import {
   Volume2,
   TrendingUp
 } from 'lucide-react';
+import ProtectedRoute from '../Component/Protected';
 
 function AIAgentsPage() {
   const router = useRouter();
@@ -76,6 +77,7 @@ function AIAgentsPage() {
   };
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen relative overflow-hidden">
     
 
@@ -244,6 +246,7 @@ function AIAgentsPage() {
         </motion.div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

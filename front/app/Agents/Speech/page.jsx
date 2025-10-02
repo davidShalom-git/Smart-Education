@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RecordRTC from 'recordrtc';
 import { Mic, Square, Bot, Sparkles, Volume2 } from 'lucide-react';
+import ProtectedRoute from '@/app/Component/Protected';
 
 export default function BeautifulSpeechToText() {
   const [isRecording, setIsRecording] = useState(false);
@@ -104,6 +105,8 @@ export default function BeautifulSpeechToText() {
   };
 
   return (
+
+    <ProtectedRoute>
     <div className="min-h-screen relative overflow-hidden">
 
       {/* Main Content */}
@@ -348,5 +351,6 @@ export default function BeautifulSpeechToText() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

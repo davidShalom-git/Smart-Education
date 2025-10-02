@@ -14,6 +14,7 @@ import {
   PieChart,
   TrendingUp
 } from 'lucide-react';
+import ProtectedRoute from '@/app/Component/Protected';
 
 export default function SmartChartGenerator() {
   const [description, setDescription] = useState('');
@@ -85,6 +86,7 @@ export default function SmartChartGenerator() {
   };
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen relative overflow-hidden">
 
 
@@ -303,5 +305,6 @@ export default function SmartChartGenerator() {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
