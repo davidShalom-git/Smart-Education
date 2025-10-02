@@ -33,18 +33,18 @@ function AIAgentsPage() {
       features: ["Email Processing", "AI Responses", "Multi-language Support"],
       status: "Active"
     },
-    {
-      id: 2,
-      title: "Quiz Generator Pro",
-      description: "Generate downloadable PDF quizzes from any document using advanced AI",
-      icon: FileText,
-      gradient: "from-purple-500 to-pink-500",
-      bgGradient: "from-purple-500/10 to-pink-500/10",
-      borderGradient: "from-purple-500/30 to-pink-500/30",
-      route: "/Agents/Quiz",
-      features: ["PDF Generation", "Smart Questions", "Custom Difficulty"],
-      status: "Active"
-    },
+    // {
+    //   id: 2,
+    //   title: "Quiz Generator Pro",
+    //   description: "Generate downloadable PDF quizzes from any document using advanced AI",
+    //   icon: FileText,
+    //   gradient: "from-purple-500 to-pink-500",
+    //   bgGradient: "from-purple-500/10 to-pink-500/10",
+    //   borderGradient: "from-purple-500/30 to-pink-500/30",
+    //   route: "/Agents/Quiz",
+    //   features: ["PDF Generation", "Smart Questions", "Custom Difficulty"],
+    //   status: "Active"
+    // },
     {
       id: 3,
       title: "Voice AI Assistant",
