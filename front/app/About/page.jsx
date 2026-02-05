@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const About = () => {
   const [text, setText] = useState('');
-  const fullText = "Karthick";
+  const fullText = "Sai Karthick";
   const timeoutRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -247,6 +247,54 @@ const About = () => {
             <div className="text-6xl mb-4">☢️</div>
             <p className="text-xl text-orange-300 font-bold mb-2">"Tactical Nuke Incoming!"</p>
             <p className="text-gray-400">The only thing more legendary than my K/D ratio is my circuit designs 😎</p>
+          </motion.div>
+
+          {/* Image Gallery */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
+            {/* COD Mobile Image */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="relative rounded-3xl overflow-hidden border border-orange-500/30 group"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80"
+                alt="Gaming Setup"
+                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <h3 className="text-xl font-bold text-orange-400">🎮 Pro Gamer Mode</h3>
+                <p className="text-gray-300 text-sm">Legendary ranked in COD Mobile</p>
+              </div>
+              <div className="absolute top-4 right-4 bg-red-500 px-3 py-1 rounded-full text-sm font-bold">
+                LIVE
+              </div>
+            </motion.div>
+
+            {/* ECE Image */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="relative rounded-3xl overflow-hidden border border-cyan-500/30 group"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80"
+                alt="Electronics Engineering"
+                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <h3 className="text-xl font-bold text-cyan-400">⚡ ECE Engineering</h3>
+                <p className="text-gray-300 text-sm">Circuits, signals, and innovation</p>
+              </div>
+              <div className="absolute top-4 right-4 bg-cyan-500 px-3 py-1 rounded-full text-sm font-bold">
+                TECH
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.section>
@@ -496,13 +544,6 @@ const About = () => {
                 className="group relative px-8 py-4 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-full font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-orange-500/25"
               >
                 <span className="relative z-10">🎮 Let's Play!</span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-orange-400 text-orange-400 rounded-full font-bold text-lg hover:bg-orange-400 hover:text-white transition-all duration-300"
-              >
-                📄 View Resume
               </motion.button>
             </div>
           </motion.div>
