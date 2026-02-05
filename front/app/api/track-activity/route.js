@@ -40,7 +40,12 @@ export async function POST(req) {
         const body = await req.json();
         const { type, title, description, metadata } = body;
 
-        const xpEarned = XP_TABLE[type] || 10;
+        let xpEarned = XP_TABLE[type] || 10;
+
+        // Custom XP logic for Quiz Results
+        if (type === 'QUIZ_RESULT' && metadata?.score) {
+            xpEarned = metadata.score * 10; // 10 XP per correct answer
+        }
 
         // 1. Create Activity Log
         const newActivity = await Activity.create({

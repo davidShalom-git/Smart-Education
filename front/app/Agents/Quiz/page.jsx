@@ -93,7 +93,7 @@ export default function QuizGeneratorPage() {
     });
   };
 
-  const calculateScore = () => {
+  const calculateScore = async () => {
     let currentScore = 0;
     quizData.quiz.forEach((q, i) => {
       if (userAnswers[i] === q.correctAnswer) {
@@ -103,6 +103,25 @@ export default function QuizGeneratorPage() {
     setScore(currentScore);
     setSubmitted(true);
     toast.info(`You scored ${currentScore} out of ${quizData.quiz.length}!`);
+
+    try {
+      await fetch('/api/track-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'QUIZ_RESULT',
+          title: `Completed Quiz: ${quizData.title}`,
+          description: `Score: ${currentScore}/${quizData.quiz.length} (${formData.difficulty})`,
+          metadata: {
+            score: currentScore,
+            total: quizData.quiz.length,
+            difficulty: formData.difficulty
+          }
+        })
+      });
+    } catch (error) {
+      console.error('Failed to update stats:', error);
+    }
   };
 
   const handleReset = () => {
