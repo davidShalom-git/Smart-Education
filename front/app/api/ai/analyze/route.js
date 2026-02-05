@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
 import ai21Service from '@/lib/ai21Service';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pdfParseModule = require('pdf-parse');
-const pdfParse = pdfParseModule.default || pdfParseModule;
 
 export async function POST(req) {
     try {
@@ -24,6 +20,8 @@ export async function POST(req) {
                 const buffer = Buffer.from(arrayBuffer);
                 console.log(`Buffer size: ${buffer.length}`);
 
+                // Dynamic import to avoid build-time DOMMatrix error
+                const pdfParse = (await import('pdf-parse')).default;
                 const data = await pdfParse(buffer);
                 contentToAnalyze = data.text;
             } catch (error) {
