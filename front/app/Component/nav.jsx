@@ -1,10 +1,12 @@
 'use client'
 
-import Link from 'next/link'
 import React, { useState } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/store/Auth'
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user } = useAuth()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -14,6 +16,9 @@ const Nav = () => {
     { name: 'Home', href: '/' },
     { name: 'Subjects', href: '/Subjects-File' },
     { name: 'AI-Agents', href: '/Agents' },
+    { name: 'Dashboard', href: '/Dashboard' },
+    { name: 'Leaderboard', href: '/Leaderboard' },
+    ...(user?.role === 'admin' ? [{ name: 'Teacher', href: '/Teacher' }] : []),
     { name: 'About', href: '/About' },
   ]
 
@@ -24,8 +29,8 @@ const Nav = () => {
           <div className='flex justify-between items-center h-14 sm:h-16'>
             {/* Logo */}
             <div className='flex-shrink-0'>
-              <Link 
-                href='/' 
+              <Link
+                href='/'
                 className='text-xl sm:text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors duration-200'
               >
                 Champion
@@ -37,7 +42,7 @@ const Nav = () => {
               <ul className='flex space-x-8'>
                 {navItems.map((item) => (
                   <li key={item.name}>
-                    <Link 
+                    <Link
                       href={item.href}
                       className='text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group'
                     >
@@ -51,7 +56,7 @@ const Nav = () => {
 
             {/* CTA Button - Desktop */}
             <div className='hidden md:block'>
-              <Link 
+              <Link
                 href='/contact'
                 className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium'
               >
@@ -123,7 +128,7 @@ const Nav = () => {
 
       {/* Mobile backdrop */}
       {isMenuOpen && (
-        <div 
+        <div
           className='md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30'
           onClick={() => setIsMenuOpen(false)}
         />

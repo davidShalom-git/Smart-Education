@@ -36,7 +36,7 @@ function Signup() {
     if (result.success) {
       setSuccess('Account created successfully!')
       setTimeout(() => {
-        router.push('/') 
+        router.push('/')
       }, 1500)
     } else {
       setError(result.message || 'Signup failed')
@@ -50,20 +50,7 @@ function Signup() {
   }
 
   return (
-    <div className="min-h-screen w-full flex relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-50">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-        </div>
-
-        {/* Geometric shapes */}
-        <div className="absolute top-20 left-20 w-20 h-20 border border-white/20 rotate-45 animate-pulse"></div>
-        <div className="absolute bottom-32 right-32 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-bounce"></div>
-        <div className="absolute top-1/2 left-10 w-8 h-8 bg-yellow-400 transform rotate-45 animate-spin"></div>
-      </div>
+    <div className="min-h-screen w-full flex relative overflow-hidden">
 
       {/* Left side - Hero section */}
       <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col justify-center items-center p-12 text-white">
