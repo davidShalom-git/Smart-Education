@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const About = () => {
   const [text, setText] = useState('');
-  const fullText = "David Shalom";
+  const fullText = "Sai Karthick";
   const timeoutRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -156,7 +156,7 @@ const About = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            MERN Stack & Mobile App Developer
+            ECE Student Good at Call of Duty Mobile and ECE things
           </motion.p>
 
           <motion.p
@@ -210,13 +210,13 @@ const About = () => {
                 </span>
               </h2>
               <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                Hi! I'm David Shalom, a passionate full-stack developer specializing in the MERN stack and mobile app development. With 1+ years of experience, I transform ideas into powerful digital solutions that make a real impact.
+                Hi! I'm Sai Karthick, an ECE Student Good at Call of Duty Mobile and ECE things. I bring the same strategic thinking and quick reflexes from gaming into my engineering projects.
               </p>
               <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                My journey in tech started with a curiosity about how things work behind the scenes. Today, I build scalable web applications and cross-platform mobile apps that serve thousands of users worldwide.
+                My journey in tech and electronics started with a curiosity about how things work completely behind the scenes. Today, I enjoy tackling complex challenges and building innovative solutions.
               </p>
               <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                I believe in writing clean, maintainable code and creating user experiences that not only look great but also solve real problems. When I'm not coding, you'll find me exploring new technologies and contributing to open-source projects.
+                I believe in pushing boundaries, whether that means securing a win in a Battle Royale or designing efficient circuits and systems. When I'm not studying or working on ECE projects, you'll likely find me climbing the ranks in CoD Mobile.
               </p>
 
               <div className="grid grid-cols-2 gap-4">
