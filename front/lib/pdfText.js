@@ -1,23 +1,33 @@
 import path from 'node:path';
-import { pathToFileURL, fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { installPdfDomPolyfills } from '@/lib/pdfDomPolyfill';
 
 /**
- * Resolve pdf.worker.mjs for the same pdfjs-dist instance pdf-parse uses
- * (nested under pdf-parse or hoisted).
+ * Path to pdf.worker.mjs for the pdfjs-dist copy pdf-parse uses.
+ * Avoids import.meta.resolve / require.resolve — Turbopack cannot analyze those and production may lack .resolve.
  */
 function getPdfWorkerHref() {
-    const pdfParsePkg = fileURLToPath(import.meta.resolve('pdf-parse/package.json'));
-    const requireFromParse = createRequire(pdfParsePkg);
-    let pdfJsRoot;
-    try {
-        pdfJsRoot = path.dirname(requireFromParse.resolve('pdfjs-dist/package.json'));
-    } catch {
-        return undefined;
-    }
-    const workerFile = path.join(pdfJsRoot, 'legacy', 'build', 'pdf.worker.mjs');
+    const cwd = process.cwd();
+    const nestedWorker = path.join(
+        cwd,
+        'node_modules',
+        'pdf-parse',
+        'node_modules',
+        'pdfjs-dist',
+        'legacy',
+        'build',
+        'pdf.worker.mjs'
+    );
+    const hoistedWorker = path.join(
+        cwd,
+        'node_modules',
+        'pdfjs-dist',
+        'legacy',
+        'build',
+        'pdf.worker.mjs'
+    );
+    const workerFile = existsSync(nestedWorker) ? nestedWorker : hoistedWorker;
     if (!existsSync(workerFile)) return undefined;
     return pathToFileURL(workerFile).href;
 }
