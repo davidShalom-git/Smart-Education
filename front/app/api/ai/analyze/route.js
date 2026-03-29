@@ -10,20 +10,14 @@ export async function POST(req) {
 
         if (fileUrl && !text) {
             try {
-                console.log(`Fetching PDF from: ${fileUrl}`);
                 const response = await fetch(fileUrl);
                 if (!response.ok) throw new Error(`Failed to fetch file: ${response.statusText}`);
 
-                const contentType = response.headers.get('content-type');
-                console.log(`Content-Type: ${contentType}`);
-
                 const arrayBuffer = await response.arrayBuffer();
                 const buffer = Buffer.from(arrayBuffer);
-                console.log(`Buffer size: ${buffer.length}`);
 
                 contentToAnalyze = await extractPdfText(buffer);
             } catch (error) {
-                console.error("PDF Parse Error Details:", error);
                 return NextResponse.json({ error: `Failed to parse PDF: ${error.message}` }, { status: 500 });
             }
         }

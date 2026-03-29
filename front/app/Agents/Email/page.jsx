@@ -28,7 +28,6 @@ export default function Email() {
     setLastDraft(null);
 
     try {
-      console.log('🚀 Sending email request...');
       setDebugInfo('Generating email with AI...');
 
       const response = await fetch('/api/proxy/email', {
@@ -42,11 +41,7 @@ export default function Email() {
         })
       });
 
-      console.log('📡 Response status:', response.status);
-      console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
-
       const result = await response.json();
-      console.log('📄 Email API response:', result);
 
       if (!response.ok) {
         throw new Error(result.error || result.message || `HTTP ${response.status}: ${response.statusText}`);
@@ -68,7 +63,6 @@ export default function Email() {
             { position: 'top-right', autoClose: 7000 }
           );
         } else {
-          console.log('✅ Email sent successfully!');
           setDebugInfo('Email sent successfully! Your message has been delivered.');
           toast.success("🎉 Email sent successfully!", {
             position: "top-right",
@@ -86,7 +80,6 @@ export default function Email() {
       }
 
     } catch (error) {
-      console.error('💥 Email Error:', error);
       setDebugInfo(`Error: ${error.message}`);
 
       toast.error(`❌ Failed to send email: ${error.message}`, {

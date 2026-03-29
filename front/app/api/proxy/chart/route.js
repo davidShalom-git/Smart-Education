@@ -26,8 +26,8 @@ async function buildChartResponse(mermaidCode) {
                 svgInline = text;
             }
         }
-    } catch (e) {
-        console.warn('[chart] mermaid.ink SVG fetch:', e.message);
+    } catch {
+        /* fall back to client imageUrl */
     }
 
     return {
@@ -87,7 +87,6 @@ Output rules:
 
         return NextResponse.json(await buildChartResponse(mermaidCode));
     } catch (error) {
-        console.error('Chart proxy error:', error);
         return NextResponse.json(
             { success: false, error: error.message || 'Failed to process request' },
             { status: 500 }

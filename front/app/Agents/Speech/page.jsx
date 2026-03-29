@@ -12,6 +12,7 @@ export default function BeautifulSpeechToText() {
   const [response, setResponse] = useState('');
   const [autoSpeak, setAutoSpeak] = useState(true);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [micError, setMicError] = useState('');
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
@@ -45,9 +46,7 @@ export default function BeautifulSpeechToText() {
           const voice = selectVoiceForLang(voices, lang);
           if (voice) u.voice = voice;
         }
-        u.onerror = (ev) => {
-          console.warn('[TTS] utterance error:', ev.error, ev);
-        };
+        u.onerror = () => {};
         try {
           synth.resume();
         } catch {
@@ -69,8 +68,8 @@ export default function BeautifulSpeechToText() {
         synth.removeEventListener('voiceschanged', onVoices);
         if (!spoke) speakNow();
       }, 800);
-    } catch (e) {
-      console.warn('speechSynthesis:', e);
+    } catch {
+      /* TTS unavailable in this environment */
     }
   }, []);
 
@@ -119,6 +118,7 @@ export default function BeautifulSpeechToText() {
   };
 
   const startRecording = async () => {
+    setMicError('');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true }
@@ -138,8 +138,8 @@ export default function BeautifulSpeechToText() {
       recorderRef.current = recorder;
       setIsRecording(true);
       setResponse(''); // Clear previous response
-    } catch (err) {
-      console.error("Microphone access denied:", err);
+    } catch {
+      setMicError('Microphone access is required to record. Allow the mic in your browser settings and try again.');
     }
   };
 
@@ -302,6 +302,12 @@ export default function BeautifulSpeechToText() {
                       )}
                     </motion.div>
                   </motion.button>
+
+                  {micError && (
+                    <p className="text-red-400 text-sm text-center max-w-md" role="alert">
+                      {micError}
+                    </p>
+                  )}
 
                   {/* Status Text */}
                   <motion.div

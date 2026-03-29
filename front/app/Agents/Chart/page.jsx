@@ -21,6 +21,8 @@ export default function SmartChartGenerator() {
   const [loading, setLoading] = useState(false);
   const [chartData, setChartData] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [chartError, setChartError] = useState('');
+  const [downloadError, setDownloadError] = useState('');
 
   const WEBHOOK_URL = '/api/proxy/chart';
 
@@ -28,6 +30,7 @@ export default function SmartChartGenerator() {
     if (!description.trim()) return;
 
     setLoading(true);
+    setChartError('');
 
     try {
       const formData = new FormData();
@@ -45,6 +48,7 @@ export default function SmartChartGenerator() {
       }
 
       if (result.success && (result.svgInline || result.imageUrl)) {
+        setDownloadError('');
         setChartData({
           description: description,
           svgInline: result.svgInline || null,
@@ -65,15 +69,15 @@ export default function SmartChartGenerator() {
               metadata: { hasSvg: Boolean(result.svgInline) }
             })
           });
-        } catch (err) {
-          console.error('Failed to track activity', err);
+        } catch {
+          /* activity tracking optional */
         }
 
       } else {
         throw new Error(result.error || 'Failed to generate chart');
       }
     } catch (error) {
-      console.error('Chart generation failed:', error?.message || error);
+      setChartError(error?.message || 'Failed to generate chart');
     } finally {
       setLoading(false);
     }
@@ -82,6 +86,7 @@ export default function SmartChartGenerator() {
   const downloadChart = async () => {
     if (!chartData?.mermaidCode) return;
 
+    setDownloadError('');
     try {
       const response = await fetch('/api/proxy/chart/png', {
         method: 'POST',
@@ -102,7 +107,7 @@ export default function SmartChartGenerator() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download failed:', error);
+      setDownloadError(error?.message || 'Download failed');
     }
   };
 
@@ -187,6 +192,12 @@ export default function SmartChartGenerator() {
                     </div>
                   )}
                 </motion.button>
+
+                {chartError && (
+                  <p className="text-red-400 text-sm" role="alert">
+                    {chartError}
+                  </p>
+                )}
 
                 {/* Chart Type Examples */}
                 <div className="grid grid-cols-3 gap-3">
@@ -307,6 +318,12 @@ export default function SmartChartGenerator() {
                         </motion.button>
                       )}
                     </div>
+
+                    {downloadError && (
+                      <p className="text-red-400 text-sm" role="alert">
+                        {downloadError}
+                      </p>
+                    )}
                   </motion.div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">

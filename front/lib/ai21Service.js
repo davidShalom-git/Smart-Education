@@ -61,7 +61,6 @@ export async function callGemini(prompt, jsonMode = false) {
                     'Gemini API key is invalid or not allowed. Create a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY in .env.local (restart dev server).'
                 );
             }
-            console.warn(`[Gemini] model "${modelName}" failed:`, lastError);
         }
     }
 
@@ -92,7 +91,6 @@ export async function callGeminiWithParts(parts, jsonMode = false) {
                     'Gemini API key is invalid or not allowed. Create a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY in .env.local (restart dev server).'
                 );
             }
-            console.warn(`[Gemini] multimodal "${modelName}" failed:`, lastError);
         }
     }
 
@@ -113,7 +111,6 @@ function getCacheKey(task, text) {
 function getFromCache(key) {
     const cached = cache.get(key);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-        console.log(`[Gemini] Cache hit for ${key.substring(0, 20)}...`);
         return cached.data;
     }
     if (cached) cache.delete(key);
@@ -138,15 +135,12 @@ async function generate(prompt, task, jsonMode = false) {
         const cached = getFromCache(cacheKey);
         if (cached) return cached;
 
-        console.log(`[Gemini] Generating ${task}...`);
         const text = await callGemini(prompt, jsonMode);
-        console.log(`[Gemini] ${task} ✓ Success`);
 
         saveToCache(cacheKey, text);
         return text;
-    } catch (e) {
-        console.error(`[Gemini] ${task} FAILED:`, e.message);
-        return null; // Handle graceful failure
+    } catch {
+        return null;
     }
 }
 
@@ -160,8 +154,7 @@ export function parseJSON(text, fallback) {
         // Remove markdown formatting
         cleaned = cleaned.replace(/```json/gi, '').replace(/```/g, '').trim();
         return JSON.parse(cleaned);
-    } catch (e) {
-        console.error(`[Gemini] JSON Parse Error:`, e.message);
+    } catch {
         return fallback;
     }
 }

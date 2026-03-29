@@ -76,7 +76,6 @@ export default function QuizGeneratorPage() {
       }
 
     } catch (err) {
-      console.error(err);
       setError(err.message);
       toast.error(`Error: ${err.message}`);
     } finally {
@@ -119,8 +118,8 @@ export default function QuizGeneratorPage() {
           }
         })
       });
-    } catch (error) {
-      console.error('Failed to update stats:', error);
+    } catch {
+      /* activity tracking optional */
     }
   };
 
@@ -203,8 +202,7 @@ export default function QuizGeneratorPage() {
 
       doc.save('generated-quiz.pdf');
       toast.success('PDF Downloaded!');
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error('Failed to generate PDF');
     }
   };

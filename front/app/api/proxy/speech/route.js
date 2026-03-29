@@ -48,7 +48,6 @@ Listen to the user's audio. They may not be able to type.
 
         return NextResponse.json({ text: text.trim() }, { status: 200 });
     } catch (error) {
-        console.error('Speech proxy error:', error);
         return NextResponse.json(
             { text: 'Sorry, I had trouble processing your audio. Please try again.', error: error.message },
             { status: 200 }

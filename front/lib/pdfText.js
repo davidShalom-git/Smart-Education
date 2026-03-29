@@ -1,12 +1,14 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
+import { installPdfDomPolyfills } from '@/lib/pdfDomPolyfill';
 
 /**
  * pdf.js must load its worker from a real filesystem path. Next/Turbopack bundling
  * otherwise points at a missing chunk (fake worker error).
  */
 async function ensurePdfWorker() {
+    installPdfDomPolyfills();
     const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
     const workerFile = path.join(
         process.cwd(),

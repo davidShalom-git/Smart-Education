@@ -30,10 +30,6 @@ Respond with ONLY a single JSON object (no markdown code fences, no commentary).
     let draft = normalizeEmailDraft(tryParseJsonObject(raw));
 
     if (!draft) {
-        console.warn('[email] JSON draft parse failed, raw snippet:', String(raw).slice(0, 400));
-    }
-
-    if (!draft) {
         const plainPrompt = `Write a professional email to ${JSON.stringify(to)} about:
 """
 ${userPrompt}
@@ -152,7 +148,6 @@ export async function POST(request) {
 
         return NextResponse.json({ message: 'Success', sent: true }, { status: 200 });
     } catch (error) {
-        console.error('Email proxy error:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to process request', message: 'Failed' },
             { status: 500 }

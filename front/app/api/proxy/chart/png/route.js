@@ -32,7 +32,6 @@ export async function POST(request) {
             }
         });
     } catch (error) {
-        console.error('chart/png proxy:', error);
         return NextResponse.json(
             { error: error.message || 'PNG export failed' },
             { status: 500 }
