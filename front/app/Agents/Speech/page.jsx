@@ -16,7 +16,7 @@ export default function BeautifulSpeechToText() {
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
-  const animationFrameRef = useRef(null);
+  const animationFrameRef = useRef(null)
   const WEBHOOK_URL = '/api/proxy/speech';
 
   const speakText = useCallback((text) => {
