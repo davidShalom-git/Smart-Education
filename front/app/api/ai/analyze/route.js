@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import ai21Service from '@/lib/ai21Service';
+import { extractPdfText } from '@/lib/pdfText';
 
 export async function POST(req) {
     try {
@@ -20,10 +21,7 @@ export async function POST(req) {
                 const buffer = Buffer.from(arrayBuffer);
                 console.log(`Buffer size: ${buffer.length}`);
 
-                // Dynamic import to avoid build-time DOMMatrix error
-                const pdfParse = (await import('pdf-parse')).default;
-                const data = await pdfParse(buffer);
-                contentToAnalyze = data.text;
+                contentToAnalyze = await extractPdfText(buffer);
             } catch (error) {
                 console.error("PDF Parse Error Details:", error);
                 return NextResponse.json({ error: `Failed to parse PDF: ${error.message}` }, { status: 500 });

@@ -25,7 +25,7 @@ function AIAgentsPage() {
     {
       id: 1,
       title: "Smart Contact Assistant",
-      description: "AI-powered contact form that processes messages and generates intelligent responses",
+      description: "Recipient plus topic only — Gemini drafts the email and sends it via your SMTP",
       icon: Mail,
       gradient: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-500/10 to-cyan-500/10",

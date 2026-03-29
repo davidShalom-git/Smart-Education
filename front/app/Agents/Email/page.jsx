@@ -7,10 +7,12 @@ import ProtectedRoute from '@/app/Component/Protected';
 
 export default function Email() {
   const [formData, setFormData] = useState({
+    to: '',
     prompt: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [debugInfo, setDebugInfo] = useState('');
+  const [lastDraft, setLastDraft] = useState(null);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -23,10 +25,11 @@ export default function Email() {
     e.preventDefault();
     setIsLoading(true);
     setDebugInfo('');
+    setLastDraft(null);
 
     try {
       console.log('🚀 Sending email request...');
-      setDebugInfo('Sending your message to AI...');
+      setDebugInfo('Generating email with AI...');
 
       const response = await fetch('/api/proxy/email', {
         method: 'POST',
@@ -34,6 +37,7 @@ export default function Email() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          to: formData.to.trim(),
           prompt: formData.prompt
         })
       });
@@ -42,37 +46,42 @@ export default function Email() {
       console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
 
       const result = await response.json();
-      console.log('📄 N8N Response:', result);
+      console.log('📄 Email API response:', result);
 
       if (!response.ok) {
-        throw new Error(result.message || result.error || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(result.error || result.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 
-      // ✅ FIXED: Correct success detection based on your console output
-      // Your N8N returns { message: "Success" } for successful emails
-      if (result.message === "Success" ||
-        result.status === "success" ||
-        result.success === true ||
-        response.status === 200) {
-
-        console.log('✅ Email sent successfully!');
-        setDebugInfo('Email sent successfully! Your message has been delivered.');
-
-        toast.success('🎉 Email sent successfully! We\'ll get back to you soon.', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
-        // Clear form after successful submission
-        setFormData({ prompt: '' });
-
+      if (result.message === 'Success' || result.status === 'success' || result.success === true) {
+        if (result.sent === false && result.draft) {
+          setLastDraft({
+            to: result.to || formData.to.trim(),
+            subject: result.draft.subject,
+            body: result.draft.body
+          });
+          setDebugInfo(
+            result.hint ||
+              'SMTP is not set up — your email was generated below. Copy it into your mail app, or add SMTP_* vars to .env.local to send automatically.'
+          );
+          toast.info(
+            'Email draft ready — SMTP not configured. Copy the text below or configure SMTP to send automatically.',
+            { position: 'top-right', autoClose: 7000 }
+          );
+        } else {
+          console.log('✅ Email sent successfully!');
+          setDebugInfo('Email sent successfully! Your message has been delivered.');
+          toast.success("🎉 Email sent successfully!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          setFormData({ to: '', prompt: '' });
+          setLastDraft(null);
+        }
       } else {
-        // Handle N8N workflow errors
-        console.log('❌ N8N workflow failed:', result);
         throw new Error(result.error || result.errorMessage || 'Email processing failed');
       }
 
@@ -117,7 +126,7 @@ export default function Email() {
               Smart Email Assistant
             </h1>
             <p className="text-xl text-white/70">
-              AI-powered Email that processes messages and generates intelligent responses
+              Enter the recipient and topic — Gemini writes the email. With <code className="text-purple-300">SMTP_*</code> and <code className="text-purple-300">EMAIL_FROM</code> in <code className="text-purple-300">.env.local</code> it sends automatically. Optional <code className="text-purple-300">EMAIL_FROM_NAME</code> sets the visible sender name (e.g. Sai Karthick).
             </p>
           </motion.div>
 
@@ -133,6 +142,57 @@ export default function Email() {
                   <span className="text-white text-xs">ℹ️</span>
                 </div>
                 <p className="text-blue-200 text-sm">{debugInfo}</p>
+              </div>
+            </motion.div>
+          )}
+
+          {lastDraft && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 bg-amber-500/15 border border-amber-400/40 rounded-3xl p-6 shadow-xl"
+            >
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span className="text-amber-300">✉️</span> Generated email (copy & send manually)
+              </h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <span className="text-white/50">To</span>
+                  <p className="text-white font-mono break-all">{lastDraft.to}</p>
+                </div>
+                <div>
+                  <span className="text-white/50">Subject</span>
+                  <p className="text-white font-medium">{lastDraft.subject}</p>
+                </div>
+                <div>
+                  <span className="text-white/50">Body</span>
+                  <pre className="mt-1 p-4 bg-black/30 rounded-xl text-white/90 whitespace-pre-wrap font-sans text-sm max-h-64 overflow-y-auto border border-white/10">
+                    {lastDraft.body}
+                  </pre>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const blob = `To: ${lastDraft.to}\nSubject: ${lastDraft.subject}\n\n${lastDraft.body}`;
+                      navigator.clipboard.writeText(blob);
+                      toast.success('Full email copied to clipboard');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-amber-500/30 hover:bg-amber-500/50 text-white text-sm font-medium border border-amber-400/40"
+                  >
+                    Copy all
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(lastDraft.body);
+                      toast.success('Body copied');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium border border-white/20"
+                  >
+                    Copy body only
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
@@ -157,8 +217,23 @@ export default function Email() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
+                  <label htmlFor="to" className="block text-sm font-medium text-white/90 mb-3">
+                    Recipient email *
+                  </label>
+                  <input
+                    id="to"
+                    name="to"
+                    type="email"
+                    required
+                    value={formData.to}
+                    onChange={handleInputChange}
+                    placeholder="name@example.com"
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+                <div>
                   <label htmlFor="prompt" className="block text-sm font-medium text-white/90 mb-3">
-                    Your Message *
+                    Topic or instructions *
                   </label>
                   <textarea
                     id="prompt"
@@ -167,18 +242,18 @@ export default function Email() {
                     required
                     value={formData.prompt}
                     onChange={handleInputChange}
-                    placeholder="Enter your message, question, or inquiry here..."
+                    placeholder="e.g. Write a concise email about the effects of war, or invite them to next week's study group..."
                     className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
                   />
                   <p className="text-white/50 text-xs mt-1">
-                    AI will process your message and generate an appropriate response
+                    You don&apos;t need to write the full email — only who it goes to and what it should cover
                   </p>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isLoading || !formData.prompt.trim()}
-                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${isLoading || !formData.prompt.trim()
+                  disabled={isLoading || !formData.prompt.trim() || !formData.to.trim()}
+                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${isLoading || !formData.prompt.trim() || !formData.to.trim()
                     ? 'bg-gray-500/50 cursor-not-allowed text-white/50'
                     : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                     }`}

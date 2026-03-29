@@ -1,20 +1,98 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RecordRTC from 'recordrtc';
 import { Mic, Square, Bot, Sparkles, Volume2 } from 'lucide-react';
 import ProtectedRoute from '@/app/Component/Protected';
+import { inferSpeechLang, selectVoiceForLang, primeSpeechVoices } from '@/lib/speechLang';
 
 export default function BeautifulSpeechToText() {
   const [isRecording, setIsRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [response, setResponse] = useState('');
+  const [autoSpeak, setAutoSpeak] = useState(true);
   const [audioLevel, setAudioLevel] = useState(0);
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const animationFrameRef = useRef(null);
   const WEBHOOK_URL = '/api/proxy/speech';
+
+  const speakText = useCallback((text) => {
+    if (typeof window === 'undefined' || !text?.trim()) return;
+    try {
+      const synth = window.speechSynthesis;
+      synth.cancel();
+      try {
+        synth.resume();
+      } catch {
+        /* ignore */
+      }
+
+      const lang = inferSpeechLang(text);
+      let spoke = false;
+
+      const speakNow = () => {
+        if (spoke) return;
+        spoke = true;
+        const voices = synth.getVoices();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        u.rate = 0.92;
+        u.pitch = 1;
+        u.volume = 1;
+        if (voices.length > 0) {
+          const voice = selectVoiceForLang(voices, lang);
+          if (voice) u.voice = voice;
+        }
+        u.onerror = (ev) => {
+          console.warn('[TTS] utterance error:', ev.error, ev);
+        };
+        try {
+          synth.resume();
+        } catch {
+          /* ignore */
+        }
+        synth.speak(u);
+      };
+
+      const tryWithVoices = () => {
+        if (spoke) return;
+        if (synth.getVoices().length > 0) speakNow();
+      };
+
+      tryWithVoices();
+      const onVoices = () => tryWithVoices();
+      synth.addEventListener('voiceschanged', onVoices);
+      primeSpeechVoices();
+      window.setTimeout(() => {
+        synth.removeEventListener('voiceschanged', onVoices);
+        if (!spoke) speakNow();
+      }, 800);
+    } catch (e) {
+      console.warn('speechSynthesis:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    primeSpeechVoices();
+    const synth = window.speechSynthesis;
+    const refresh = () => primeSpeechVoices();
+    synth.addEventListener('voiceschanged', refresh);
+    return () => synth.removeEventListener('voiceschanged', refresh);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!autoSpeak) {
+      window.speechSynthesis.cancel();
+      return;
+    }
+    if (!response.trim()) return;
+    speakText(response);
+    return () => window.speechSynthesis.cancel();
+  }, [response, autoSpeak, speakText]);
 
   // Audio level monitoring for visual feedback
   const monitorAudioLevel = (stream) => {
@@ -47,6 +125,7 @@ export default function BeautifulSpeechToText() {
       });
 
       monitorAudioLevel(stream);
+      primeSpeechVoices();
 
       const recorder = new RecordRTC(stream, {
         type: "audio",
@@ -122,7 +201,21 @@ export default function BeautifulSpeechToText() {
               <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-6">
                 Voice AI
               </h1>
-              <p className="text-xl text-white/70 mb-8">Speak naturally, get intelligent responses</p>
+              <p className="text-xl text-white/70 mb-4">
+                Speak naturally — Gemini replies in text; your browser reads it aloud when voice reply is on. For Tamil and other voices: Windows needs a <strong className="text-white">Speech</strong> voice, not only a keyboard language — open{' '}
+                <span className="text-cyan-300">Settings → Time &amp; language → Speech → Add voices</span> and install <strong className="text-white">Tamil</strong>, then restart the browser.
+              </p>
+              <div className="flex justify-center mb-8">
+                <label className="flex items-center gap-2 text-white/80 text-sm cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={autoSpeak}
+                    onChange={(e) => setAutoSpeak(e.target.checked)}
+                    className="rounded border-white/30 bg-white/10 text-cyan-500 focus:ring-cyan-500"
+                  />
+                  Voice reply (read answer aloud)
+                </label>
+              </div>
 
               {/* Floating Elements */}
               <div className="flex justify-center gap-4 mb-8">
@@ -300,6 +393,13 @@ export default function BeautifulSpeechToText() {
                       <p className="text-white text-lg leading-relaxed font-medium">
                         {response}
                       </p>
+                      <button
+                        type="button"
+                        onClick={() => speakText(response)}
+                        className="mt-4 text-sm font-medium text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline"
+                      >
+                        Play voice again
+                      </button>
                     </motion.div>
 
                     {/* Decorative Elements */}

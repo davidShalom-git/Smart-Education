@@ -1,93 +1,102 @@
-// Google Gemini Service (Replacing AI21)
-const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+// Google Gemini via official SDK (replaces raw fetch + retired model IDs like gemini-2.0-flash-exp)
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Model selection configuration
-const MODEL = 'gemini-2.0-flash-exp'; // As requested by user
-const FALLBACK_MODEL = 'gemini-1.5-flash';
+function getApiKey() {
+    return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+}
+
+/** Tried in order until one works. Override with GEMINI_MODEL=.env first. */
+function modelCandidates() {
+    const fromEnv = process.env.GEMINI_MODEL?.trim();
+    const defaults = [
+        'gemini-2.0-flash',
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-preview-05-20',
+        'gemini-1.5-flash-8b',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro'
+    ];
+    const list = fromEnv ? [fromEnv, ...defaults] : defaults;
+    return [...new Set(list)];
+}
+
+function isAuthOrKeyError(message) {
+    return /API key|API_KEY|invalid|PERMISSION_DENIED|401|403/i.test(message || '');
+}
+
+async function generateWithSdk(genAI, modelName, requestPayload, jsonMode, temperature) {
+    const generationConfig = {
+        temperature,
+        maxOutputTokens: 8192,
+        ...(jsonMode ? { responseMimeType: 'application/json' } : {})
+    };
+    const model = genAI.getGenerativeModel({ model: modelName, generationConfig });
+    const result = await model.generateContent(requestPayload);
+    const text = result.response.text();
+    if (!text || !String(text).trim()) {
+        throw new Error('Empty response from Gemini');
+    }
+    return String(text).trim();
+}
 
 // ============================================
 // GEMINI API CALL FUNCTION
 // ============================================
-async function callGemini(prompt, jsonMode = false) {
-    if (!API_KEY) {
-        throw new Error("GEMINI_API_KEY is missing in environment variables.");
+export async function callGemini(prompt, jsonMode = false) {
+    const key = getApiKey();
+    if (!key) {
+        throw new Error('GEMINI_API_KEY is missing in environment variables.');
     }
 
-    const url = `${BASE_URL}/${MODEL}:generateContent?key=${API_KEY}`;
+    const genAI = new GoogleGenerativeAI(key);
+    let lastError = '';
 
-    const requestBody = {
-        contents: [{
-            parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 8192,
-            responseMimeType: jsonMode ? "application/json" : "text/plain"
-        }
-    };
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-
-            // If 2.0-flash fails (e.g. 404 not found or 400), try fallback to 1.5-flash
-            if (response.status === 404 || response.status === 400) {
-                console.warn(`[Gemini] ${MODEL} failed (${response.status}), trying fallback: ${FALLBACK_MODEL}`);
-                return await callGeminiFallback(prompt, jsonMode);
+    for (const modelName of modelCandidates()) {
+        try {
+            return await generateWithSdk(genAI, modelName, prompt, jsonMode, 0.4);
+        } catch (e) {
+            lastError = e?.message || String(e);
+            if (isAuthOrKeyError(lastError)) {
+                throw new Error(
+                    'Gemini API key is invalid or not allowed. Create a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY in .env.local (restart dev server).'
+                );
             }
-
-            throw new Error(`Gemini API Error ${response.status}: ${errorText}`);
+            console.warn(`[Gemini] model "${modelName}" failed:`, lastError);
         }
-
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (!text) {
-            throw new Error("Empty response from Gemini");
-        }
-
-        return text;
-    } catch (error) {
-        console.error("[Gemini] API Call Failed:", error.message);
-        throw error;
     }
+
+    throw new Error(
+        `No Gemini model responded. Last error: ${lastError}. In .env.local set GEMINI_MODEL to a name from https://ai.google.dev/gemini-api/docs/models`
+    );
 }
 
-async function callGeminiFallback(prompt, jsonMode = false) {
-    const url = `${BASE_URL}/${FALLBACK_MODEL}:generateContent?key=${API_KEY}`;
-    const requestBody = {
-        contents: [{
-            parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 8192,
-            responseMimeType: jsonMode ? "application/json" : "text/plain"
-        }
-    };
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Gemini Fallback API Error ${response.status}: ${errorText}`);
+/**
+ * Multimodal Gemini (e.g. audio + text). Used for speech agent.
+ */
+export async function callGeminiWithParts(parts, jsonMode = false) {
+    const key = getApiKey();
+    if (!key) {
+        throw new Error('GEMINI_API_KEY is missing in environment variables.');
     }
 
-    const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const genAI = new GoogleGenerativeAI(key);
+    let lastError = '';
+
+    for (const modelName of modelCandidates()) {
+        try {
+            return await generateWithSdk(genAI, modelName, parts, jsonMode, 0.5);
+        } catch (e) {
+            lastError = e?.message || String(e);
+            if (isAuthOrKeyError(lastError)) {
+                throw new Error(
+                    'Gemini API key is invalid or not allowed. Create a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY in .env.local (restart dev server).'
+                );
+            }
+            console.warn(`[Gemini] multimodal "${modelName}" failed:`, lastError);
+        }
+    }
+
+    throw new Error(`No Gemini model accepted audio. Last error: ${lastError}`);
 }
 
 // ============================================
@@ -144,7 +153,7 @@ async function generate(prompt, task, jsonMode = false) {
 // ============================================
 // JSON PARSING HELPER
 // ============================================
-function parseJSON(text, fallback) {
+export function parseJSON(text, fallback) {
     if (!text) return fallback;
     try {
         let cleaned = text.trim();

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="682" viewBox="0 0 1024 682">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a1f13"/>
+      <stop offset="100%" stop-color="#0f0b07"/>
+    </linearGradient>
+    <radialGradient id="plate" cx="50%" cy="55%" r="40%">
+      <stop offset="0%" stop-color="#f7f0e6"/>
+      <stop offset="100%" stop-color="#c8b79e"/>
+    </radialGradient>
+    <linearGradient id="dosa" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f0b45c"/>
+      <stop offset="100%" stop-color="#cc7f2b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="682" fill="url(#bg)"/>
+  <ellipse cx="512" cy="390" rx="360" ry="180" fill="url(#plate)" opacity="0.9"/>
+  <path d="M220 390 C360 260, 660 260, 800 390 C660 520, 360 520, 220 390Z" fill="url(#dosa)"/>
+  <path d="M290 390 C400 300, 620 300, 730 390 C620 480, 400 480, 290 390Z" fill="#e09a45" opacity="0.75"/>
+  <circle cx="395" cy="390" r="14" fill="#8b5a2b" opacity="0.35"/>
+  <circle cx="455" cy="355" r="10" fill="#8b5a2b" opacity="0.35"/>
+  <circle cx="560" cy="418" r="12" fill="#8b5a2b" opacity="0.35"/>
+  <circle cx="625" cy="378" r="9" fill="#8b5a2b" opacity="0.35"/>
+  <text x="512" y="96" text-anchor="middle" fill="#f7c36d" font-size="56" font-family="Arial, sans-serif" font-weight="700">DOSA SAMPLE</text>
+  <text x="512" y="140" text-anchor="middle" fill="#e8d9c5" font-size="24" font-family="Arial, sans-serif">Local AR image asset</text>
+</svg>

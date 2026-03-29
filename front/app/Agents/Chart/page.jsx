@@ -40,10 +40,15 @@ export default function SmartChartGenerator() {
 
       const result = await response.json();
 
-      if (result.success && result.imageUrl) {
+      if (!response.ok) {
+        throw new Error(result.error || `Server error (${response.status})`);
+      }
+
+      if (result.success && (result.svgInline || result.imageUrl)) {
         setChartData({
           description: description,
-          imageUrl: result.imageUrl,
+          svgInline: result.svgInline || null,
+          imageUrl: result.imageUrl || null,
           mermaidCode: result.mermaidCode,
           timestamp: new Date().toLocaleString()
         });
@@ -57,7 +62,7 @@ export default function SmartChartGenerator() {
               type: 'CHART',
               title: 'Generated Smart Chart',
               description: description.substring(0, 50) + (description.length > 50 ? '...' : ''),
-              metadata: { imageUrl: result.imageUrl }
+              metadata: { hasSvg: Boolean(result.svgInline) }
             })
           });
         } catch (err) {
@@ -65,22 +70,29 @@ export default function SmartChartGenerator() {
         }
 
       } else {
-        throw new Error('Failed to generate chart');
+        throw new Error(result.error || 'Failed to generate chart');
       }
     } catch (error) {
-      console.error('Chart generation failed:', error);
+      console.error('Chart generation failed:', error?.message || error);
     } finally {
       setLoading(false);
     }
   };
 
   const downloadChart = async () => {
-    if (!chartData?.imageUrl) return;
+    if (!chartData?.mermaidCode) return;
 
     try {
-      const response = await fetch(chartData.imageUrl);
+      const response = await fetch('/api/proxy/chart/png', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mermaidCode: chartData.mermaidCode })
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || `Download failed (${response.status})`);
+      }
       const blob = await response.blob();
-
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -124,7 +136,7 @@ export default function SmartChartGenerator() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Input Section */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -209,31 +221,45 @@ export default function SmartChartGenerator() {
               <AnimatePresence>
                 {chartData ? (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35 }}
                     className="space-y-6"
                   >
-                    {/* Chart Image */}
-                    <div className="relative group">
-                      <div className="bg-white rounded-2xl p-4 shadow-lg">
-                        <img
-                          src={chartData.imageUrl}
-                          alt="Generated Chart"
-                          className="w-full h-auto rounded-lg"
-                          onError={(e) => {
-                            e.target.src = '/placeholder-chart.png';
-                            e.target.alt = 'Chart failed to load';
-                          }}
-                        />
+                    {/* Chart preview: SVG scales to width; horizontal scroll if very wide */}
+                    <div className="relative group w-full min-w-0">
+                      <div className="bg-white rounded-2xl p-3 sm:p-5 shadow-lg overflow-x-auto overflow-y-hidden">
+                        <div className="flex min-h-[280px] sm:min-h-[360px] w-full items-center justify-center">
+                          {chartData.svgInline ? (
+                            <div
+                              className="chart-mermaid-svg w-full max-w-full flex justify-center overflow-x-auto [&_svg]:max-w-full [&_svg]:h-auto [&_svg]:block max-h-[min(75vh,720px)]"
+                              // eslint-disable-next-line react/no-danger
+                              dangerouslySetInnerHTML={{ __html: chartData.svgInline }}
+                            />
+                          ) : chartData.imageUrl ? (
+                            <img
+                              src={chartData.imageUrl}
+                              alt="Generated Chart"
+                              className="block w-full max-w-full h-auto max-h-[min(75vh,720px)] object-contain object-center rounded-lg"
+                              decoding="async"
+                              onError={(e) => {
+                                e.target.src = '/placeholder-chart.png';
+                                e.target.alt = 'Chart failed to load';
+                              }}
+                            />
+                          ) : (
+                            <p className="text-gray-500 text-sm">No preview available</p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Overlay with download button */}
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-center justify-center pointer-events-none group-hover:pointer-events-auto">
                         <button
+                          type="button"
                           onClick={downloadChart}
-                          className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl px-4 py-2 text-white font-medium hover:bg-white/30 transition-colors"
+                          className="pointer-events-auto bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl px-4 py-2 text-white font-medium hover:bg-white/30 transition-colors"
                         >
                           <Download className="w-4 h-4 inline mr-2" />
                           Download
