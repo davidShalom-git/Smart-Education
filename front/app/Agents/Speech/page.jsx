@@ -30,7 +30,7 @@ export default function BeautifulSpeechToText() {
       }
 
       const lang = inferSpeechLang(text);
-      let spoke = false;
+      let spoke = false
 
       const speakNow = () => {
         if (spoke) return;
