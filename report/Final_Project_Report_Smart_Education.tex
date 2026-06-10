@@ -1,0 +1,384 @@
+% Final Year Major Project Report (department format -- NOT IEEE conference)
+% Smart Education / E-Learning System
+% Compile with: pdflatex (twice for TOC). Overleaf: set this file as Main document.
+\documentclass[a4paper,12pt,openany]{report}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[hidelinks]{hyperref}
+\usepackage{parskip}
+
+% ---------- Fill these for your submission ----------
+\newcommand{\ProjectTitle}{Smart Education System: A Full-Stack E-Learning Platform with Generative AI, Multimodal Content, and Learning Analytics}
+\newcommand{\DegreeName}{Bachelor of Technology}
+\newcommand{\BranchName}{Electronics and Communication Engineering}
+\newcommand{\CampusLine}{SRM Institute of Science and Technology, Kattankulathur Campus, Chennai, India}
+\newcommand{\ReportMonthYear}{April 2026}
+
+\newcommand{\StudentOneName}{Augustine Fletcher A.\ S.}
+\newcommand{\StudentOneReg}{RA22110XXXXXXXX}
+\newcommand{\StudentTwoName}{Sharath S}
+\newcommand{\StudentTwoReg}{RA22110XXXXXXXX}
+\newcommand{\StudentThreeName}{Saikarthik M}
+\newcommand{\StudentThreeReg}{RA22110XXXXXXXX}
+
+\newcommand{\GuideName}{Dr.\ A.\ Shirly Edward}
+\newcommand{\GuideDesignation}{Assistant Professor (Senior Grade), Department of ECE}
+\newcommand{\HODName}{Dr.\ A.\ Shirly Edward}
+% ----------------------------------------------------
+
+\begin{document}
+
+% ----- Title page -----
+\begin{titlepage}
+\centering
+\vspace*{1cm}
+{\Large\bfseries MAJOR PROJECT REPORT\par}
+\vspace{1.2cm}
+{\large On\par}
+\vspace{0.6cm}
+{\Large\bfseries \ProjectTitle\par}
+\vspace{1.5cm}
+{\large Submitted in partial fulfilment of the requirements for the award of the degree of\par}
+\vspace{0.5cm}
+{\Large\bfseries \DegreeName\par}
+\vspace{0.4cm}
+{\large in\par}
+\vspace{0.4cm}
+{\Large\bfseries \BranchName\par}
+\vspace{1.2cm}
+{\large\textbf{By}\par}
+\vspace{0.6cm}
+\begin{tabular}{ll}
+\StudentOneName & (\StudentOneReg) \\[0.35em]
+\StudentTwoName & (\StudentTwoReg) \\[0.35em]
+\StudentThreeName & (\StudentThreeReg) \\
+\end{tabular}
+\vspace{1cm}
+{\large\textbf{Under the guidance of}\par}
+\vspace{0.5cm}
+{\large \GuideName\par}
+{\normalsize \GuideDesignation\par}
+\vfill
+{\large\textbf{DEPARTMENT OF ELECTRONICS \& COMMUNICATION ENGINEERING}\par}
+\vspace{0.35cm}
+{\large\textbf{FACULTY OF ENGINEERING AND TECHNOLOGY}\par}
+\vspace{0.35cm}
+{\large\textbf{\CampusLine}\par}
+\vspace{0.8cm}
+{\large \ReportMonthYear\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% ----- Bonafide certificate -----
+\chapter*{Bonafide Certificate}
+\addcontentsline{toc}{chapter}{Bonafide Certificate}
+This is to certify that the project report titled ``\ProjectTitle'' is the bonafide work of \StudentOneName\ (\StudentOneReg), \StudentTwoName\ (\StudentTwoReg), and \StudentThreeName\ (\StudentThreeReg), who carried out the project under my supervision. To the best of my knowledge, this work has not been submitted elsewhere for the award of a degree or diploma.
+
+\vspace{2cm}
+\noindent\begin{tabular}{p{7cm}p{7cm}}
+\textbf{Signature of the Guide} & \textbf{Signature of the HOD} \\[2.5cm]
+\GuideName & \HODName \\
+\GuideDesignation & Head of the Department, ECE \\
+\end{tabular}
+
+\vspace{1.5cm}
+\noindent\textbf{Date:}\underline{\hspace{4cm}}\hfill
+\textbf{Place:}\underline{\hspace{4cm}}
+
+\clearpage
+
+% ----- Acknowledgement -----
+\chapter*{Acknowledgement}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+We express our sincere gratitude to the management and faculty of SRM Institute of Science and Technology for providing the infrastructure and academic environment to complete this major project.
+
+We thank our Head of the Department, \HODName, for continuous support. We are especially grateful to our project guide, \GuideName, for technical guidance, regular reviews, and encouragement throughout the development of the \textit{Smart Education System} platform.
+
+We acknowledge the authors of open documentation and APIs (including Next.js, MongoDB, Google Gemini, and related services) that enabled integration of modern web and AI-assisted learning features in our implementation.
+
+Finally, we thank our families and peers for their patience and constructive feedback during testing and demonstration.
+
+\vspace{1.5cm}
+\noindent\begin{tabular}{ll}
+\StudentOneName & \StudentOneReg \\[0.5em]
+\StudentTwoName & \StudentTwoReg \\[0.5em]
+\StudentThreeName & \StudentThreeReg \\
+\end{tabular}
+
+\clearpage
+
+% ----- Abstract -----
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Conventional learning portals often separate content delivery from intelligent assistance. Learners switch between PDFs, videos, generic chat tools, and email---which increases cognitive load and weakens traceability for instructors. This project implements a \textbf{smart education system}: a single full-stack web application that combines multilingual subject delivery (files and videos), instructor publishing, learning analytics, and \textbf{server-orchestrated generative AI}.
+
+The front end is built with \textbf{React} and \textbf{Next.js (App Router)} with responsive UI styling. The server exposes \textbf{Route Handlers} for authentication, catalogs, teacher uploads, dashboards, leaderboards, and AI-assisted tools. \textbf{MongoDB} with Mongoose stores users, activities, and subject metadata; \textbf{Cloudinary} hosts media assets referenced by the database. Authentication uses \textbf{JWT} and password hashing; optional \textbf{Google OAuth} is integrated for sign-in flexibility.
+
+Generative features---summaries and quizzes from extracted PDF text, instructional charts (Mermaid), email drafting, speech-oriented assistance, and optional \textbf{Stability SDXL} imagery---run \textbf{only on the server}, using the \textbf{Google Gemini} API with model fallbacks and bounded caching. Gamification (XP, levels, badges) and activity logs support dashboards and leaderboards suitable for capstone demonstration.
+
+We document requirements, architecture, implementation modules, testing with a functional checklist, and illustrative latency observations. We conclude with limitations (provider dependence, assessment integrity, deployment hardening) and future work (unified JWT claims, instructor review of AI-generated assessments, streaming responses, formal user studies).
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} E-learning, smart education, Next.js, MongoDB, generative AI, learning analytics, multimodal content, JWT, Cloudinary.
+
+\clearpage
+
+\tableofcontents
+\clearpage
+
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\begin{center}
+\begin{tabular}{@{}cl@{}}
+\toprule
+\textbf{Abbrev.} & \textbf{Expansion} \\
+\midrule
+API & Application Programming Interface \\
+CDN & Content Delivery Network \\
+ECE & Electronics and Communication Engineering \\
+HTTP & Hypertext Transfer Protocol \\
+JSON & JavaScript Object Notation \\
+JWT & JSON Web Token \\
+LLM & Large Language Model \\
+LMS & Learning Management System \\
+MERN-like & MongoDB + Express-style API patterns (here: Next.js API routes) \\
+ORM/ODM & Object Document Mapper (Mongoose) \\
+PDF & Portable Document Format \\
+REST & Representational State Transfer \\
+SDXL & Stable Diffusion XL (text-to-image) \\
+UI & User Interface \\
+URL & Uniform Resource Locator \\
+UX & User Experience \\
+\bottomrule
+\end{tabular}
+\end{center}
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ==================== CHAPTER 1 ====================
+\chapter{Introduction}
+
+\section{Background}
+Digital learning platforms are now default channels for distributing lecture notes, readings, and recorded content. Despite widespread adoption, many student-facing systems still treat learning as a passive library experience: learners download PDFs, watch videos, and only later seek help through disjoint channels (search engines, generic chatbots, or office tools). That separation increases cognitive load and makes it harder for instructors to align assistance with course objectives.
+
+\section{Problem Statement}
+This project addresses the gap between \textit{content consumption} and \textit{contextual assistance} by building an integrated platform where authenticated learners can study materials, track progress, and invoke AI-supported tools (summaries, quizzes, charts, email drafting, speech assistance, optional image generation) without exposing provider secrets in the browser.
+
+\section{Objectives}
+The primary objectives are:
+\begin{enumerate}[label=\textbf{O\arabic*:}, leftmargin=*]
+\item Deliver structured subject materials (files and videos) across multiple learning tracks (e.g., English, Tamil, Social).
+\item Support instructor/teacher publishing workflows with cloud-backed media storage.
+\item Embed generative assistance through server-side orchestration with structured outputs suitable for UI rendering (JSON, Mermaid, plain text).
+\item Capture engagement-oriented analytics (activities, XP, badges) and present dashboards and leaderboards.
+\item Demonstrate secure engineering practices for authentication, authorization, and deployment considerations appropriate to a capstone system.
+\end{enumerate}
+
+\section{Scope}
+The scope is a deployable monolithic web application with transparent module boundaries (UI pages, API routes, database models, and service libraries). The evaluation emphasizes functional validation and engineering observations rather than statistically definitive learning-outcome claims.
+
+\section{Organization of the Report}
+Chapter~2 reviews related work. Chapter~3 presents requirements and analysis. Chapter~4 describes system design and architecture. Chapter~5 explains implementation. Chapter~6 discusses testing and results. Chapter~7 concludes with future enhancements.
+
+% ==================== CHAPTER 2 ====================
+\chapter{Literature Survey and Related Work}
+
+\section{Online Learning and LMS Ecosystems}
+Blended and online modalities remain central to institutional delivery strategies. Mainstream LMS platforms (e.g., Canvas, Moodle, Blackboard) emphasize extensibility through plugins and mature workflows such as gradebooks and proctoring integrations. Many capstone implementations trade ecosystem depth for a single cohesive codebase that is easier to demonstrate and maintain.
+
+\section{Intelligent Assistance and Generative AI}
+Large language models enable summarization, item generation, and drafting, but educational deployments require constraints on format, length, policy, and instructor oversight. A common engineering pattern is an \textit{embedded assistant}: generative features are invoked from authenticated flows and return artifacts that the UI can render predictably (e.g., JSON for quizzes).
+
+\section{Learning Analytics and Gamification}
+Learning analytics aggregates events into dashboards for reflection and early intervention. Gamification (points, levels, badges) is widely used to increase engagement, though efficacy depends on design. This project combines lightweight activity logs with XP-style progression for demonstration scenarios.
+
+\section{Summary}
+The literature motivates an integrated approach: a modern web stack with authenticated APIs, structured generative outputs, and analytics primitives aligned with common smart-learning product patterns.
+
+% ==================== CHAPTER 3 ====================
+\chapter{System Analysis and Requirements}
+
+\section{Stakeholders and Users}
+Key stakeholders are students (learners), teachers (content publishers), and administrators (platform management). The system assumes role-aware access for protected routes (e.g., teacher uploads).
+
+\section{Functional Requirements}
+Representative functional requirements include:
+\begin{itemize}[leftmargin=*]
+\item User registration, login, logout, and optional Google OAuth.
+\item Browse subject catalogs for files and videos by track.
+\item PDF viewing and download flows for learning materials.
+\item Teacher uploads with metadata persistence and cloud media references.
+\item Dashboard and leaderboard views backed by stored activities and XP fields.
+\item AI agents: summarization/quiz generation from extracted PDF text, chart generation (Mermaid), email drafting, speech assistance, optional SDXL image generation.
+\end{itemize}
+
+\section{Non-Functional Requirements}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Security:} Password hashing; JWT issuance; server-side validation for privileged actions.
+\item \textbf{Performance:} Responsive UI; tolerable latency for AI routes with loading states.
+\item \textbf{Maintainability:} Modular libraries for AI services, database connection reuse, and clear API route boundaries.
+\item \textbf{Scalability (demonstration-level):} MongoDB references and CDN delivery for media rather than storing large binaries in primary documents.
+\end{itemize}
+
+\section{Feasibility}
+The implementation uses managed services (MongoDB Atlas-class hosting, Cloudinary, Gemini/Stability APIs), making the project feasible within typical capstone timelines while documenting environment-variable configuration and cost/latency trade-offs.
+
+% ==================== CHAPTER 4 ====================
+\chapter{System Design}
+
+\section{High-Level Architecture}
+The system follows a three-tier shape:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Presentation tier:} React pages under Next.js App Router (responsive UI, client state for authentication UX).
+\item \textbf{Application tier:} Next.js Route Handlers under \texttt{app/api} for business logic, authorization, orchestration, and external API calls.
+\item \textbf{Data tier:} MongoDB for persistence; Cloudinary for media bytes and CDN URLs.
+\end{enumerate}
+Secrets (API keys) remain server-side; browsers receive only results and non-sensitive references.
+
+\section{Major Modules}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Authentication module:} signup/login, token verification, logout; hybrid patterns (HttpOnly cookies for some routes and client token storage elsewhere---production should normalize).
+\item \textbf{Catalog module:} list/fetch subject files and videos.
+\item \textbf{Teacher module:} authenticated uploads and metadata creation.
+\item \textbf{Analytics module:} dashboard summaries, activity tracking, leaderboard queries.
+\item \textbf{Agents/AI module:} proxy routes for generative tasks and PDF analysis pipelines.
+\item \textbf{Media module:} Cloudinary upload helpers and URL persistence on entities.
+\end{itemize}
+
+\section{Database Design (Representative)}
+Representative collections/entities include:
+\begin{itemize}[leftmargin=*]
+\item \textbf{User:} credentials/profile, role, gamification fields (XP, level, badges), optional OAuth identifiers.
+\item \textbf{Activity:} typed learning events with timestamps and metadata for dashboards.
+\item \textbf{Subject resources:} English/Tamil/Social file and video models with references to stored assets.
+\end{itemize}
+
+\section{AI Pipeline Design}
+PDFs are processed server-side: fetch/decode, text extraction, then LLM prompts for summarization or structured quiz generation. A service layer implements cache-first generation with ordered model fallbacks and JSON cleanup for UI consumption.
+
+\section{Security Design Considerations}
+Server routes must enforce role checks regardless of UI hiding. JWT claims should be consistent across login, verification, and analytics endpoints in a hardened deployment.
+
+% ==================== CHAPTER 5 ====================
+\chapter{Implementation}
+
+\section{Technology Stack}
+Table~\ref{tab:stack} summarizes the implemented stack.
+
+\begin{table}[htbp]
+\centering
+\caption{Technology stack overview}
+\label{tab:stack}
+\begin{tabular}{@{}llp{6.8cm}@{}}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Role in project} \\
+\midrule
+Framework & Next.js (App Router) & Pages + Route Handlers (\texttt{app/api}) \\
+UI & React, Tailwind CSS & Responsive layout and components \\
+State & Zustand & Client authentication/session helpers \\
+Database & MongoDB + Mongoose & Users, activities, catalogs \\
+Auth & JWT + bcryptjs & Sessions; password storage \\
+Media & Cloudinary & Upload + CDN references \\
+LLM & Google Gemini API & Summaries, quizzes, charts, email, speech assistance \\
+Image (optional) & Stability SDXL & Text-to-image assets \\
+PDF & Node PDF tooling & Server-side text extraction \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Authentication and Session Handling}
+Passwords are hashed before storage. Successful login/registrations mint JWTs. Some routes use HttpOnly cookies while others rely on client-stored tokens; the report documents this as a known consistency item for future hardening.
+
+\section{Content Delivery and Teacher Workflow}
+Teacher uploads write metadata to MongoDB and store media in Cloudinary, avoiding large binaries in primary documents.
+
+\section{Student Experience: Dashboard and Gamification}
+Dashboards query progression fields and recent activities. XP updates can be tied to categories such as quiz usage, chart generation, and other agent events depending on implementation rules.
+
+\section{AI Integration}
+Central routes analyze PDFs/text and delegate to a Gemini-centric service module with caching and fallbacks. Optional SDXL integration supports creative assets with higher latency.
+
+\section{Error Handling and Logging}
+API routes return structured errors for missing configuration, upstream AI failures, invalid JSON, and authorization failures. Demonstration deployments typically log to console; production would centralize logs and add correlation identifiers.
+
+\section{Screenshots (Placeholders)}
+\textit{Insert screenshots here:} landing page, login, subject materials, PDF viewer, dashboard, leaderboard, teacher upload, Agents (Quiz/Chart/Email/Speech), optional image generation output. Replace this section with labeled figures (\texttt{\textbackslash begin\{figure\}}) for your final PDF.
+
+% ==================== CHAPTER 6 ====================
+\chapter{Testing and Results}
+
+\section{Test Strategy}
+Testing combines manual walkthroughs with a functional checklist mapped to demo scripts: authentication flows, catalog browsing, PDF viewing, teacher upload (role-gated), dashboard/leaderboard visibility, and AI routes (with valid API keys).
+
+\section{Functional Test Checklist (Representative)}
+\begin{center}
+\small
+\begin{tabular}{@{}p{5.2cm}cp{6.5cm}@{}}
+\toprule
+\textbf{Scenario} & \textbf{Pass} & \textbf{Notes} \\
+\midrule
+Register / login / logout & $\checkmark$ & Verify token/cookie behaviour \\
+Browse subject materials & $\checkmark$ & Track-specific lists \\
+Open PDF viewer & $\checkmark$ & Large files acceptable for demo \\
+Teacher upload (role) & $\checkmark$ & Requires teacher-capable account \\
+Dashboard + activity & $\checkmark$ & Recent events visible \\
+Leaderboard & $\checkmark$ & Ordering plausible for demo data \\
+Summarize PDF text & $\checkmark$ & Requires provider key \\
+Generate quiz JSON & $\checkmark$ & JSON mode + UI rendering \\
+Chart / email agents & $\checkmark$ & Quality depends on prompts \\
+Optional SDXL image & $\checkmark$ & Longest latency category \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Performance Observations (Illustrative)}
+Illustrative mean timings from development runs (exact numbers depend on network and keys): catalog routes are typically sub-second under nominal conditions; LLM-heavy routes are dominated by provider latency; SDXL remains the longest end-to-end operation due to sampling and upload steps.
+
+\section{Discussion}
+The integrated design reduces context switching for learners. Primary risks are assessment integrity (AI-generated quizzes), provider dependence, and consistent authentication policies across routes.
+
+% ==================== CHAPTER 7 ====================
+\chapter{Conclusion and Future Scope}
+
+\section{Conclusion}
+This project delivered a smart education web platform integrating multilingual subject delivery, instructor publishing, gamified analytics, and embedded generative AI using a Next.js + MongoDB + Cloudinary architecture. Server-side orchestration keeps secrets protected and supports structured outputs for predictable UI rendering.
+
+\section{Future Enhancements}
+\begin{itemize}[leftmargin=*]
+\item Normalize authentication and JWT claims across all routes.
+\item Instructor tooling to review, edit, and publish AI-generated assessments.
+\item Streaming model output to improve perceived latency.
+\item Formal user studies with instruments and ethical review where applicable.
+\item Production hardening: centralized logging, rate limiting, cost monitoring, and privacy review for document processing.
+\end{itemize}
+
+% ----- References -----
+\begin{thebibliography}{99}
+\bibitem{ref1} S. Hrastinski, ``Asynchronous and synchronous e-learning,'' \textit{Educ. Quarterly}, vol.~31, no.~1, pp.~51--55, 2008.
+\bibitem{ref2} J. Wei \textit{et al.}, ``Emergent abilities of large language models,'' \textit{Trans. Mach. Learn. Res.}, 2022.
+\bibitem{ref3} T. Brown \textit{et al.}, ``Language models are few-shot learners,'' in \textit{Proc. NeurIPS}, vol.~33, 2020, pp.~1877--1901.
+\bibitem{ref4} Vercel, ``Next.js Documentation,'' 2026. [Online]. Available: \url{https://nextjs.org/docs}
+\bibitem{ref5} MongoDB Inc., ``Mongoose Documentation,'' 2026. [Online]. Available: \url{https://mongoosejs.com/docs/guide.html}
+\bibitem{ref6} Google, ``Gemini API Documentation,'' 2026. [Online]. Available: \url{https://ai.google.dev/gemini-api/docs}
+\bibitem{ref7} Stability AI, ``Platform API Reference,'' 2026. [Online]. Available: \url{https://platform.stability.ai/docs/api-reference}
+\bibitem{ref8} Cloudinary, ``Cloudinary Documentation,'' 2026. [Online]. Available: \url{https://cloudinary.com/documentation}
+\bibitem{ref9} M. Jones, J. Bradley, and N. Sakimura, ``JSON Web Token (JWT),'' RFC 7519, IETF, 2015.
+\bibitem{ref10} N. Provos and D. Mazi\`{e}res, ``A future-adaptable password scheme,'' in \textit{Proc. USENIX ATEC}, 1999, pp.~81--91.
+\end{thebibliography}
+
+\appendix
+\chapter{Plagiarism and Declaration (Template)}
+\textit{Attach your department's latest plagiarism form (Turnitin summary) and signed declaration pages. Ensure chapter titles in the plagiarism table match this report's chapters (Introduction; Literature Survey; System Analysis; System Design; Implementation; Testing and Results; Conclusion).}
+
+\end{document}

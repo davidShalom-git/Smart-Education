@@ -1,455 +1,296 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from "react";
+import { motion } from 'framer-motion';
 import Link from "next/link";
+import { 
+  BookOpen, 
+  Trophy, 
+  Target, 
+  BrainCircuit, 
+  GraduationCap, 
+  Users, 
+  CheckCircle2, 
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Globe
+} from 'lucide-react';
 
 const About = () => {
-  const [text, setText] = useState('');
-  const fullText = "Sai Karthick";
-  const timeoutRef = useRef(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-
-  useEffect(() => {
-    let currentIndex = 0;
-    const typeEffect = () => {
-      if (currentIndex < fullText.length) {
-        setText(fullText.substring(0, currentIndex + 1));
-        currentIndex++;
-        timeoutRef.current = setTimeout(typeEffect, 120);
-      } else {
-        timeoutRef.current = setTimeout(() => {
-          setText('');
-          currentIndex = 0;
-          typeEffect();
-        }, 3000)
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2
       }
-    };
+    }
+  };
 
-    typeEffect();
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
 
-  const skills = [
+  const features = [
     {
-      name: 'React.js',
-      level: 80,
-      gradient: 'from-cyan-400 to-blue-500',
-      icon: '⚛️',
-      description: 'Building dynamic UIs'
+      icon: BrainCircuit,
+      title: "AI-Powered Learning",
+      description: "Get personalized guidance and practice recommendations custom-fit for your pace and style.",
+      gradient: "from-purple-500 to-pink-500"
     },
     {
-      name: 'Node.js',
-      level: 70,
-      gradient: 'from-green-500 to-emerald-600',
-      icon: '🟢',
-      description: 'Backend development'
+      icon: BookOpen,
+      title: "Comprehensive Curriculum",
+      description: "Dive deep into structured courses across multiple fields, complete with interactive notes and media.",
+      gradient: "from-blue-500 to-cyan-500"
     },
     {
-      name: 'MongoDB',
-      level: 70,
-      gradient: 'from-green-600 to-green-800',
-      icon: '🍃',
-      description: 'Database management'
+      icon: Trophy,
+      title: "Competitive Spirit",
+      description: "Challenge your peers, climb the global leaderboards, and master subjects through friendly competition.",
+      gradient: "from-orange-500 to-amber-500"
     },
     {
-      name: 'Express.js',
-      level: 80,
-      gradient: 'from-gray-600 to-gray-800',
-      icon: '⚡',
-      description: 'Server-side framework'
-    },
-    {
-      name: 'React Native',
-      level: 60,
-      gradient: 'from-blue-500 to-purple-600',
-      icon: '📱',
-      description: 'Mobile app development'
-    },
-    {
-      name: 'JavaScript',
-      level: 85,
-      gradient: 'from-yellow-400 to-orange-500',
-      icon: '🟨',
-      description: 'Core programming language'
+      icon: Target,
+      title: "Active Learning Pathways",
+      description: "Move away from passive video watching. Solve challenges, interact with smart agents, and build retention.",
+      gradient: "from-green-500 to-emerald-500"
     }
   ];
 
-  const projects = [
-    {
-      title: 'FavBlogs Platform',
-      description: 'A full-stack blogging platform with modern UI and seamless user experience',
-      tech: ['React', 'Node.js', 'MongoDB', 'Express', 'JWT'],
-      icon: '📝',
-      gradient: 'from-purple-500 to-pink-500',
-      link: ''
-    },
-    {
-      title: 'Educational App',
-      description: 'Cross-platform mobile application and real-time updates',
-      tech: ['MERN', 'JWT AUTH'],
-      icon: '🏫',
-      gradient: 'from-blue-500 to-cyan-500',
-      link: 'https://education-neon-mu.vercel.app/'
-    },
-    {
-      title: 'Real Time Chat Application',
-      description: 'Create an Account and Chat With Your Friends and Families..💬',
-      tech: ['MERN Stack', 'Socket.io', 'JWT Auth'],
-      icon: '💬',
-      gradient: 'from-green-500 to-teal-500',
-      link: 'https://chat-app-r2z9.onrender.com/'
-    }
+  const statistics = [
+    { number: "10K+", label: "Active Learners", icon: Users },
+    { number: "500+", label: "Modules & Topics", icon: GraduationCap },
+    { number: "95%", label: "Satisfaction Rate", icon: CheckCircle2 },
+    { number: "24/7", label: "AI Support", icon: Zap }
   ];
 
-  const achievements = [
-    { icon: '🏆', title: '20+ Projects', description: 'Successfully delivered' },
-    { icon: '⭐', title: '1 Years', description: 'Industry experience' },
-    { icon: '🚀', title: '4+', description: 'Mobile apps launched' }
+  const values = [
+    {
+      title: "Access For All",
+      description: "Democratizing world-class educational tools and knowledge bases for students everywhere, regardless of backgrounds."
+    },
+    {
+      title: "Engagement First",
+      description: "Learning shouldn't feel like a chore. We build gamification, competition, and rewards into the core learning loop."
+    },
+    {
+      title: "Continuous Adaptability",
+      description: "Our AI systems constantly analyze your performance, feeding you exact resources to fill in knowledge gaps."
+    }
   ];
 
   return (
-    <div className="text-white relative overflow-hidden">
-
+    <div className="relative z-10 px-4 md:px-8 max-w-7xl mx-auto py-16 text-white min-h-screen">
+      
       {/* Hero Section */}
-      <motion.div
-        style={{ y }}
-        className="relative z-10 min-h-screen flex flex-col justify-center items-center px-4 pt-20"
-      >
+      <section className="text-center py-16 md:py-24 max-w-4xl mx-auto">
         <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 mb-6"
         >
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
-            <div className="w-40 h-40 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-6xl mb-6 shadow-2xl">
-              👨‍💻
-            </div>
-          </motion.div>
-
-          <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1 }}
-          >
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-              {text}
-            </span>
-            <motion.span
-              className="inline-block w-1 h-16 bg-gradient-to-b from-purple-400 to-pink-400 ml-2 rounded-full"
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            />
-          </motion.h1>
-
-          <motion.p
-            className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-4 font-light"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          >
-            ECE Student Good at Call of Duty Mobile and ECE things
-          </motion.p>
-
-          <motion.p
-            className="text-lg text-purple-300 max-w-2xl mx-auto mb-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-          >
-            Crafting digital experiences that bridge innovation with functionality
-          </motion.p>
-
-          <motion.div
-            className="flex flex-wrap justify-center gap-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-          >
-            <div className="px-6 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-400/30 rounded-full">
-              <span className="text-purple-300">React.js</span>
-            </div>
-            <div className="px-6 py-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm border border-green-400/30 rounded-full">
-              <span className="text-green-300">Node.js</span>
-            </div>
-            <div className="px-6 py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-blue-400/30 rounded-full">
-              <span className="text-blue-300">React Native</span>
-            </div>
-            <div className="px-6 py-3 bg-gradient-to-r from-yellow-600/20 to-orange-600/20 backdrop-blur-sm border border-yellow-400/30 rounded-full">
-              <span className="text-yellow-300">MongoDB</span>
-            </div>
-          </motion.div>
+          <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+          <span className="text-sm font-semibold tracking-wide bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            The Future of Learning is Here
+          </span>
         </motion.div>
-      </motion.div>
 
-      {/* About Me Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 py-20 px-4"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  About Me
-                </span>
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                Hi! I'm Sai Karthick, an ECE Student Good at Call of Duty Mobile and ECE things. I bring the same strategic thinking and quick reflexes from gaming into my engineering projects.
-              </p>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                My journey in tech and electronics started with a curiosity about how things work completely behind the scenes. Today, I enjoy tackling complex challenges and building innovative solutions.
-              </p>
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                I believe in pushing boundaries, whether that means securing a win in a Battle Royale or designing efficient circuits and systems. When I'm not studying or working on ECE projects, you'll likely find me climbing the ranks in CoD Mobile.
-              </p>
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.8 }}
+          className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none mb-6"
+        >
+          Shaping Minds with{" "}
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+            Next-Generation Education
+          </span>
+        </motion.h1>
 
-              <div className="grid grid-cols-2 gap-4">
-                {achievements.map((achievement, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl"
-                  >
-                    <div className="text-3xl mb-2">{achievement.icon}</div>
-                    <div className="text-xl font-bold text-purple-300 mb-1">{achievement.title}</div>
-                    <div className="text-sm text-gray-400">{achievement.description}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed"
+        >
+          Champion isn't just an e-learning tool. It's a smart learning ecosystem that pairs immersive curriculum, personalized AI agents, and a global student community to unleash academic mastery.
+        </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-                <div className="text-center mb-6">
-                  <div className="text-6xl mb-4">🎯</div>
-                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    My Mission
-                  </h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    To create innovative digital solutions that empower businesses and enhance user experiences through cutting-edge technology and thoughtful design.
-                  </p>
-                </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
+        >
+          <Link href="/Subjects-File">
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/25">
+              Explore Subjects <ArrowRight className="w-5 h-5" />
+            </button>
+          </Link>
+          <Link href="/Agents">
+            <button className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm">
+              Meet AI-Agents
+            </button>
+          </Link>
+        </motion.div>
+      </section>
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-purple-300">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Full-Stack Development</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-purple-300">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Mobile App Development</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-purple-300">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>UI/UX Design</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-purple-300">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Performance Optimization</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Skills Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 py-20 px-4"
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+      {/* Philosophy / Values Section */}
+      <section className="py-16 border-t border-white/10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="lg:col-span-1"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                My Skills
-              </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Our Pillars of <br />
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Educational Growth</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Expertise across the full development stack with a focus on modern technologies
+            <p className="text-gray-400 leading-relaxed pr-4">
+              We design our products around the fundamental truth that learning is an active, ongoing quest—not a one-way lecture.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {skills.map((skill, index) => (
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {values.map((val, idx) => (
               <motion.div
-                key={skill.name}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
-                    {skill.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1">{skill.name}</h3>
-                    <p className="text-gray-400 text-sm">{skill.description}</p>
-                  </div>
-                  <div className="text-lg font-bold text-purple-300">{skill.level}%</div>
-                </div>
-
-                <div className="relative w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                  <motion.div
-                    className={`h-full bg-gradient-to-r ${skill.gradient} rounded-full`}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${skill.level}%` }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Projects Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 py-20 px-4"
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                Featured Projects
-              </span>
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Some of the exciting projects I've worked on recently
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 50 }}
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                className="group cursor-pointer"
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors duration-300"
               >
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 h-full hover:bg-white/10 transition-all duration-300 shadow-2xl">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${project.gradient} rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    {project.icon}
-                  </div>
-
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300">
-                    {project.title}
-                  </h3>
-
-                  <p className="text-gray-400 mb-4 group-hover:text-gray-300 transition-colors duration-300">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tech.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-purple-600/20 text-purple-300 rounded-full text-xs border border-purple-400/30"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center text-purple-400 group-hover:text-pink-400 transition-colors duration-300">
-                    <Link href={project.link} className="mr-2">View Projects...</Link>
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
+                <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 font-bold text-sm">
+                  0{idx + 1}
                 </div>
+                <h3 className="text-lg font-bold mb-2 text-white">{val.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{val.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* Contact Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 py-20 px-4"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl"
-          >
-            <div className="text-6xl mb-6">🚀</div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Let's Build Something Amazing Together
+      {/* Core Features Grid */}
+      <section className="py-20 border-t border-white/10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+            Built for the{" "}
+            <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Modern Student</span>
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Everything needed to accelerate comprehension, retention, and performance, custom-built inside our interface.
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        >
+          {features.map((feat, idx) => {
+            const IconComponent = feat.icon;
+            return (
+              <motion.div
+                key={idx}
+                variants={fadeInUp}
+                whileHover={{ y: -6, scale: 1.01 }}
+                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex flex-col sm:flex-row gap-6 items-start"
+              >
+                <div className={`w-14 h-14 bg-gradient-to-br ${feat.gradient} rounded-2xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                  <IconComponent className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300">
+                    {feat.title}
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed text-sm">
+                    {feat.description}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </section>
+
+      {/* Stats and Impact */}
+      <section className="py-16 border-t border-white/10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {statistics.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-colors"
+              >
+                <Icon className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+                <div className="text-3xl md:text-4xl font-extrabold text-white mb-2">{stat.number}</div>
+                <div className="text-sm text-gray-400 font-semibold">{stat.label}</div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Marketing Action Section */}
+      <section className="py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 border border-white/10 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-8 opacity-10">
+            <Globe className="w-64 h-64 text-white" />
+          </div>
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+              Elevate Your Knowledge Base Today
             </h2>
-            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Have a project in mind? I'd love to hear about it and discuss how we can bring your ideas to life with cutting-edge technology.
+            <p className="text-gray-300 mb-8 text-sm md:text-base leading-relaxed">
+              Explore a personalized roadmap, compete in the global ranks, and download curated material instantly. Let's champion education together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/25">
-                <span className="relative z-10">Get In Touch</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
-              </button>
-              <button className="px-8 py-4 border-2 border-purple-400 text-purple-400 rounded-full font-bold text-lg hover:bg-purple-400 hover:text-white transition-all duration-300 hover:scale-105">
-                <a href="https://pdflink.to/280823a3/">Resume</a>
-              </button>
+              <Link href="/signup">
+                <button className="w-full sm:w-auto px-8 py-3 bg-white text-purple-900 rounded-full font-bold text-md hover:bg-gray-100 transition-all duration-200">
+                  Join Champion
+                </button>
+              </Link>
+              <Link href="/Subjects-File">
+                <button className="w-full sm:w-auto px-8 py-3 border border-white/30 hover:border-white rounded-full font-bold text-md text-white transition-all duration-200">
+                  Browse Subjects
+                </button>
+              </Link>
             </div>
-          </motion.div>
-        </div>
-      </motion.section>
+          </div>
+        </motion.div>
+      </section>
 
-      {/* Footer spacing */}
-      <div className="h-20"></div>
     </div>
   );
 };
