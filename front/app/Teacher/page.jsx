@@ -145,7 +145,7 @@ export default function TeacherDashboard() {
                                         id="file-upload"
                                         className="hidden"
                                         onChange={(e) => setFile(e.target.files[0])}
-                                        accept={activeTab === 'files' ? '.pdf,.doc,.docx' : 'video/*'}
+                                        accept={activeTab === 'files' ? '*' : 'video/*'}
                                     />
                                     <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center">
                                         <div className="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mb-4">

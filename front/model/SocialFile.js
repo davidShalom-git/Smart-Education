@@ -16,6 +16,6 @@ const SocialFileSchema = new mongoose.Schema({
     },
 },{timestamps: true})
 
-const SocialFile = mongoose.model.SocialFile || mongoose.model('SocialFile',SocialFileSchema)
+const SocialFile = mongoose.models.SocialFile || mongoose.model('SocialFile', SocialFileSchema)
 
 export default SocialFile;

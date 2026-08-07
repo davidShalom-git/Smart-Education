@@ -2,11 +2,18 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/store/Auth'
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuth()
+  const { user, isAuthenticated, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    router.push('/')
+  }
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -18,7 +25,7 @@ const Nav = () => {
     { name: 'AI-Agents', href: '/Agents' },
     { name: 'Dashboard', href: '/Dashboard' },
     { name: 'Leaderboard', href: '/Leaderboard' },
-    ...(user?.role === 'admin' ? [{ name: 'Teacher', href: '/Teacher' }] : []),
+    ...(user?.role === 'admin' || user?.role === 'teacher' ? [{ name: 'Teacher', href: '/Teacher' }] : []),
     { name: 'About', href: '/About' },
   ]
 
@@ -56,12 +63,21 @@ const Nav = () => {
 
             {/* CTA Button - Desktop */}
             <div className='hidden md:block'>
-              <Link
-                href='/contact'
-                className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium'
-              >
-                Get Started
-              </Link>
+              {isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium'
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href='/contact'
+                  className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium'
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -114,13 +130,25 @@ const Nav = () => {
             ))}
             {/* Mobile CTA Button */}
             <div className='pt-2'>
-              <Link
-                href='/contact'
-                className='bg-blue-600 text-white hover:bg-blue-700 block px-4 py-3 rounded-xl text-base font-medium text-center transition-colors duration-200 w-full'
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Get Started
-              </Link>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    handleLogout()
+                  }}
+                  className='bg-blue-600 text-white hover:bg-blue-700 block px-4 py-3 rounded-xl text-base font-medium text-center transition-colors duration-200 w-full'
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href='/contact'
+                  className='bg-blue-600 text-white hover:bg-blue-700 block px-4 py-3 rounded-xl text-base font-medium text-center transition-colors duration-200 w-full'
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </div>

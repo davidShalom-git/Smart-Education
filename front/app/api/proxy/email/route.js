@@ -109,8 +109,7 @@ export async function POST(request) {
                     message: 'Success',
                     sent: false,
                     to,
-                    draft: { subject, body: textBody },
-                    hint: 'SMTP not configured — add SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM (and optional EMAIL_FROM_NAME) in .env.local, then restart the dev server.'
+                    draft: { subject, body: textBody }
                 },
                 { status: 200 }
             );

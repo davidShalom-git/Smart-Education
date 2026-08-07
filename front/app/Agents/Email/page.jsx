@@ -11,7 +11,6 @@ export default function Email() {
     prompt: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [debugInfo, setDebugInfo] = useState('');
   const [lastDraft, setLastDraft] = useState(null);
 
   const handleInputChange = (e) => {
@@ -24,12 +23,9 @@ export default function Email() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setDebugInfo('');
     setLastDraft(null);
 
     try {
-      setDebugInfo('Generating email with AI...');
-
       const response = await fetch('/api/proxy/email', {
         method: 'POST',
         headers: {
@@ -54,16 +50,11 @@ export default function Email() {
             subject: result.draft.subject,
             body: result.draft.body
           });
-          setDebugInfo(
-            result.hint ||
-              'SMTP is not set up — your email was generated below. Copy it into your mail app, or add SMTP_* vars to .env.local to send automatically.'
-          );
           toast.info(
-            'Email draft ready — SMTP not configured. Copy the text below or configure SMTP to send automatically.',
+            'Email draft ready — copy the text below to send it manually.',
             { position: 'top-right', autoClose: 7000 }
           );
         } else {
-          setDebugInfo('Email sent successfully! Your message has been delivered.');
           toast.success("🎉 Email sent successfully!", {
             position: "top-right",
             autoClose: 5000,
@@ -80,8 +71,6 @@ export default function Email() {
       }
 
     } catch (error) {
-      setDebugInfo(`Error: ${error.message}`);
-
       toast.error(`❌ Failed to send email: ${error.message}`, {
         position: "top-right",
         autoClose: 8000,
@@ -119,25 +108,9 @@ export default function Email() {
               Smart Email Assistant
             </h1>
             <p className="text-xl text-white/70">
-              Enter the recipient and topic — Gemini writes the email. With <code className="text-purple-300">SMTP_*</code> and <code className="text-purple-300">EMAIL_FROM</code> in <code className="text-purple-300">.env.local</code> it sends automatically. Optional <code className="text-purple-300">EMAIL_FROM_NAME</code> sets the visible sender name (e.g. Sai Karthick).
+              Enter the recipient and topic — Gemini writes the email and sends it for you.
             </p>
           </motion.div>
-
-          {/* Debug Info */}
-          {debugInfo && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-blue-500/20 border border-blue-500/50 rounded-2xl p-4 mb-8"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">ℹ️</span>
-                </div>
-                <p className="text-blue-200 text-sm">{debugInfo}</p>
-              </div>
-            </motion.div>
-          )}
 
           {lastDraft && (
             <motion.div

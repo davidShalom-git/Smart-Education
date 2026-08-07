@@ -16,6 +16,6 @@ const TamilVideoSchema = new mongoose.Schema({
     },
 }, { timestamps: true })
 
-const TamilVideo = mongoose.model.TamilVideo || mongoose.model('TamilVideo', TamilVideoSchema)
+const TamilVideo = mongoose.models.TamilVideo || mongoose.model('TamilVideo', TamilVideoSchema)
 
 export default TamilVideo;

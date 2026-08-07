@@ -17,6 +17,6 @@ const SocialVideoSchema = new mongoose.Schema({
     },
 }, { timestamps: true })
 
-const SocialVideo = mongoose.model.SocialVideo || mongoose.model('SocialVideo', SocialVideoSchema)
+const SocialVideo = mongoose.models.SocialVideo || mongoose.model('SocialVideo', SocialVideoSchema)
 
 export default SocialVideo;

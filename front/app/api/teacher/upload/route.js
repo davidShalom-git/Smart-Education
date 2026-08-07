@@ -4,10 +4,20 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import EnglishFile from '@/model/EnglishFile';
-import TamilFile from '@/model/TamilFile';
-// import SocialFile from '@/model/SocialFile'; // Ensure these models exist or import dynamically
 import EnglishVideo from '@/model/EnglishVideo';
-// ... import other models as needed
+import TamilFile from '@/model/TamilFile';
+import TamilVideo from '@/model/TamilVideo';
+import SocialFile from '@/model/SocialFile';
+import SocialVideo from '@/model/SocialVideo';
+
+const MODELS = {
+    'english-files': EnglishFile,
+    'english-videos': EnglishVideo,
+    'tamil-files': TamilFile,
+    'tamil-videos': TamilVideo,
+    'social-files': SocialFile,
+    'social-videos': SocialVideo,
+};
 
 // Configure Cloudinary
 cloudinary.config({
@@ -68,24 +78,10 @@ export async function POST(req) {
         });
 
         // 2. Save to DB based on Subject & Type
-        // Dynamic Model Selection Logic
-        let Model;
         const key = `${subject.toLowerCase()}-${type}`;
-
-        // Map subject+type to your specific Mongoose Models
-        switch (key) {
-            case 'english-files': Model = EnglishFile; break;
-            case 'english-videos': Model = EnglishVideo; break;
-            case 'tamil-files': Model = TamilFile; break;
-            // case 'social-files': Model = SocialFile; break;
-
-            // ... handle all cases
-            default:
-                // Fallback or error if model not found for subject
-                if (subject === 'english' && type === 'files') Model = EnglishFile;
-                else if (subject === 'english' && type === 'videos') Model = EnglishVideo;
-                else if (subject === 'tamil') Model = TamilFile;
-                else return NextResponse.json({ message: 'Invalid subject/type combination' }, { status: 400 });
+        const Model = MODELS[key];
+        if (!Model) {
+            return NextResponse.json({ message: 'Invalid subject/type combination' }, { status: 400 });
         }
 
         // Create the record
