@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { BookOpen, Users, Award, TrendingUp, Clock, MessageCircle, Lightbulb, Target } from 'lucide-react'
 
@@ -127,20 +128,24 @@ const Page = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white text-purple-600 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all"
-              >
-                Start Learning Now
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-full font-semibold text-lg hover:bg-white/20 transition-all"
-              >
-                Explore Courses
-              </motion.button>
+              <Link href="/signup">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-white text-purple-600 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all"
+                >
+                  Start Learning Now
+                </motion.button>
+              </Link>
+              <Link href="/Subjects-File">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-full font-semibold text-lg hover:bg-white/20 transition-all"
+                >
+                  Explore Courses
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -290,13 +295,15 @@ const Page = () => {
             <p className="text-xl mb-10 text-white/90 max-w-2xl mx-auto">
               Join thousands of learners who are already achieving their goals. Start your journey today with a 7-day free trial.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-5 bg-white text-purple-600 rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all"
-            >
-              Get Started Free
-            </motion.button>
+            <Link href="/signup">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-5 bg-white text-purple-600 rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all"
+              >
+                Get Started Free
+              </motion.button>
+            </Link>
             <p className="mt-4 text-white/80 text-sm">No credit card required • Cancel anytime</p>
           </motion.div>
         </div>

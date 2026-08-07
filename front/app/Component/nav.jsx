@@ -72,7 +72,7 @@ const Nav = () => {
                 </button>
               ) : (
                 <Link
-                  href='/contact'
+                  href='/signup'
                   className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium'
                 >
                   Get Started
@@ -142,7 +142,7 @@ const Nav = () => {
                 </button>
               ) : (
                 <Link
-                  href='/contact'
+                  href='/signup'
                   className='bg-blue-600 text-white hover:bg-blue-700 block px-4 py-3 rounded-xl text-base font-medium text-center transition-colors duration-200 w-full'
                   onClick={() => setIsMenuOpen(false)}
                 >
